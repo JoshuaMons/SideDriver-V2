@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
- private CharacterController character;
+    private CharacterController character;
     private Vector3 direction;
 
     public float jumpForce = 10f;
     public float gravity = 20f;
+
+    public GameObject explosionEffect; // Sleep hier je particle prefab in!
 
     private void Awake()
     {
@@ -36,8 +38,21 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // if (other.CompareTag("Coin")) {
+        //     GameManager.Instance.Coin();
+        //     Destroy(other.gameObject);
+        // } 
+        
         if (other.CompareTag("Obstacle")) {
+            Explode(); 
             GameManager.Instance.GameOver();
+            Destroy(gameObject); 
         }
+    }
+
+    void Explode()
+    {
+        // Spawn het particle effect op de huidige positie
+        Instantiate(explosionEffect, transform.position, Quaternion.identity);
     }
 }

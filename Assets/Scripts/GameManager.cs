@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 
 public class GameManager : MonoBehaviour
@@ -44,9 +46,14 @@ public class GameManager : MonoBehaviour
         spawner = FindObjectOfType<Spawner>();
 
         NewGame();
+          // Voeg hier de listener toe aan de retry-knop
+        retryButton.onClick.AddListener(ReloadScene);
     }
-
-    public void NewGame()
+ 
+   public void NewGame()
+{
+    // Controleer of het player object niet null is
+    if (player != null)
     {
         Obstacle[] obstacles = FindObjectsOfType<Obstacle>();
 
@@ -58,26 +65,42 @@ public class GameManager : MonoBehaviour
         gameSpeed = initialGameSpeed;
         enabled = true;
 
-        player.gameObject.SetActive(true);
-        spawner.gameObject.SetActive(true);
+        player.gameObject.SetActive(true);  // Zet de speler actief
+        spawner.gameObject.SetActive(true);  // Zet de spawner actief
         gameOverText.gameObject.SetActive(false);
         retryButton.gameObject.SetActive(false);
 
         UpdateHiscore();
     }
-
-    public void GameOver()
+    else
+    {
+        Debug.LogWarning("Player object is missing in NewGame!");
+    }
+}
+// public void Coin()
+// {
+//     score += 100f;
+// }
+public void GameOver()
+{
+    // Controleer of het player object niet null is voordat we ermee werken
+    if (player != null)
     {
         gameSpeed = 0f;
         enabled = false;
 
-        player.gameObject.SetActive(false);
-        spawner.gameObject.SetActive(false);
+        player.gameObject.SetActive(false);  // Zet de speler inactief
+        spawner.gameObject.SetActive(false);  // Zet de spawner inactief
         gameOverText.gameObject.SetActive(true);
         retryButton.gameObject.SetActive(true);
 
         UpdateHiscore();
     }
+    else
+    {
+        Debug.LogWarning("Player object is missing in GameOver!");
+    }
+}
 
     private void Update()
     {
@@ -98,5 +121,9 @@ public class GameManager : MonoBehaviour
 
         hiscoreText.text = Mathf.FloorToInt(hiscore).ToString("D5");
     }
-   
+    // Functie om de scène opnieuw te laden
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }
